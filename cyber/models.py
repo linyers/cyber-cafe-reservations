@@ -3,17 +3,34 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_save, post_delete
 
 
+class DeviceManager(models.Manager):
+    def find_available_devices(self, start_time, end_time, device) -> list:
+        not_available_device_ids = Reservation.objects.filter(
+            device__device_type=device,
+            start_time__lt=end_time,
+            end_time__gt=start_time,
+        ).values_list("device_id", flat=True)
+
+        available_devices = Device.objects.filter(device_type=device).exclude(
+            id__in=not_available_device_ids
+        )
+
+        return available_devices
+
+
 class Device(models.Model):
     DEVICE_TYPES = [
-        ("PC", "Personal Computer"),
+        ("PC", "PC"),
         ("PS", "PlayStation"),
         ("XBOX", "Xbox"),
-        ("Nintendo", "Nintendo"),
+        ("NINTENDO", "Nintendo"),
     ]
     name = models.CharField(max_length=100, blank=True)
     image = models.ImageField(upload_to="device_images/", blank=True)
     device_type = models.CharField(max_length=10, choices=DEVICE_TYPES)
     available = models.BooleanField(default=True)  # Change
+
+    objects = DeviceManager()
 
     def __str__(self):
         return self.name
@@ -29,7 +46,6 @@ class Reservation(models.Model):
         return f"Reservation of {self.device.name} by {self.user.username} from {self.start_time} to {self.end_time}"
 
     def save(self, *args, **kwargs):
-        # Check if the device is available for the given time period
         overlapping_reservations = Reservation.objects.filter(
             device=self.device,
             start_time__lt=self.end_time,

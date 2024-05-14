@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="css/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <form method="post">
+      {% csrf_token %}
+      <span>You turn initialize at {{ start_time }}</span>
+      <span>and finalize at {{ end_time }}</span>
+      <input type="hidden" name="start_time" value="{{ start_time }}" />
+      <input type="hidden" name="end_time" value="{{ end_time }}" />
+      <select name="device">
+        <option value="">Select device</option>
+        {% for device in available_devices %}
+        <option value="{{ device.id }}">{{ device.name }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Reserver</button>
+    </form>
+  </body>
+</html>
