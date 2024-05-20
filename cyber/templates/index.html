@@ -8,6 +8,14 @@
   </head>
   <body>
     <h1>CyberCafe</h1>
+    {% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}!</p>
+    <a href="{% url 'accounts:logout' %}">Logout</a>
+    {% else %}
+    <p>Welcome, guest!</p>
+    <a href="{% url 'accounts:register' %}">Register</a>
+    <a href="{% url 'accounts:login' %}">Login</a>
+    {% endif %}
     <a href="{% url 'cyber:devices' %}">Devices</a>
   </body>
 </html>

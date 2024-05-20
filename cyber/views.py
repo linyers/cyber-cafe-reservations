@@ -1,5 +1,7 @@
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 from datetime import datetime, timedelta
 
@@ -8,7 +10,8 @@ from .forms import ReservationForm
 
 
 def index(request):
-    return render(request, "index.html")
+    user = request.user
+    return render(request, "index.html", {"user": user})
 
 
 def devices(request):
@@ -53,6 +56,7 @@ class ReservationView(TemplateView):
             },
         )
 
+    @method_decorator(login_required)
     def post(self, request, device):
         device = device.upper()
 
