@@ -1,21 +1,4 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <title></title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="css/style.css" rel="stylesheet" />
-  </head>
-  <body>
-    <h1>CyberCafe</h1>
-    {% if user.is_authenticated %}
-    <p>Welcome, {{ user.username }}!</p>
-    <a href="{% url 'accounts:logout' %}">Logout</a>
-    {% else %}
-    <p>Welcome, guest!</p>
-    <a href="{% url 'accounts:register' %}">Register</a>
-    <a href="{% url 'accounts:login' %}">Login</a>
-    {% endif %}
-    <a href="{% url 'cyber:devices' %}">Devices</a>
-  </body>
-</html>
+{% extends "base.html" %} {% block content %}
+<a href="{% url 'cyber:device-list' %}">Devices</a>
+<a href="{% url 'cyber:reservation-list' %}">Reservations</a>
+{% endblock %}

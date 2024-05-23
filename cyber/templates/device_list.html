@@ -1,0 +1,13 @@
+{% extends "base.html" %} {% block content %}
+<h2>Device List</h2>
+<ul>
+  {% for device in devices %}
+  <li>
+    {{ device.name }} - {{ device.get_device_type_display }}
+    <a href="{% url 'cyber:device-update' device.pk %}">Edit</a>
+    <a href="{% url 'cyber:device-delete' device.pk %}">Delete</a>
+  </li>
+  {% endfor %}
+</ul>
+<a href="{% url 'cyber:device-create' %}">Add new device</a>
+{% endblock %}

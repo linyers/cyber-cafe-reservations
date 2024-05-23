@@ -1,5 +1,13 @@
 from django.shortcuts import redirect, render
-from django.views.generic import TemplateView
+from django.urls import reverse_lazy
+from django.views.generic import (
+    TemplateView,
+    ListView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
@@ -14,7 +22,7 @@ def index(request):
     return render(request, "index.html", {"user": user})
 
 
-def devices(request):
+def devices_view(request):
     return render(request, "devices.html")
 
 
@@ -96,3 +104,96 @@ class ReservationView(TemplateView):
                 "available_devices": available_devices,
             },
         )
+
+
+class DeviceAdminListView(UserPassesTestMixin, ListView):
+    model = Device
+    template_name = "device_list.html"
+    context_object_name = "devices"
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class DeviceCreateAdminView(UserPassesTestMixin, CreateView):
+    model = Device
+    template_name = "device_form.html"
+    fields = ["name", "image", "device_type"]
+    success_url = reverse_lazy("cyber:devices-list")
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class DeviceUpdateAdminView(UserPassesTestMixin, UpdateView):
+    model = Device
+    template_name = "device_form.html"
+    fields = ["name", "image", "device_type"]
+    success_url = reverse_lazy("cyber:devices-list")
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class DeviceDeleteAdminView(UserPassesTestMixin, DeleteView):
+    model = Device
+    template_name = "device_confirm_delete.html"
+    success_url = reverse_lazy("cyber:devices-list")
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class ReservationListAdminView(UserPassesTestMixin, ListView):
+    model = Reservation
+    template_name = "reservation_list.html"
+    context_object_name = "reservations"
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class ReservationsDeviceTypeAdminView(UserPassesTestMixin, ListView):
+    model = Reservation
+    template_name = "reservation_device_type_admin.html"
+    context_object_name = "reservations"
+
+    def get_queryset(self):
+        device_type = self.kwargs["device"]
+        device_type_upper = device_type.upper()
+        return Reservation.objects.filter(
+            device__device_type=device_type_upper
+        ).order_by("-created_at")
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class ReservationsDeviceDetailAdminView(UserPassesTestMixin, ListView):
+    model = Reservation
+    template_name = "reservation_device_detail_admin.html"
+    context_object_name = "reservations"
+
+    def get_queryset(self):
+        device_id = self.kwargs["device_id"]
+        return Reservation.objects.filter(device=device_id).order_by("-created_at")
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class ReservationDeleteAdminView(UserPassesTestMixin, DeleteView):
+    model = Reservation
+    template_name = "reservation_confirm_delete.html"
+    context_object_name = "reservation"
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def get_success_url(self):
+        next_url = self.request.GET.get("next", reverse_lazy("cyber:reservation-list"))
+        return next_url
+
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        return redirect(self.get_success_url())

@@ -1,0 +1,11 @@
+{% extends "base.html" %} {% block content %}
+<h2>Reservations for Device ID {{ view.kwargs.device_id }}</h2>
+<ul>
+  {% for reservation in reservations %}
+  <li>
+    {{ reservation.device.name }} - {{ reservation.created_at }} - {{
+    reservation.user.username }}
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block content %}
+<h2 class="mt-4">Reservation List</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Device</th>
+      <th scope="col">User</th>
+      <th scope="col">Created At</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for reservation in reservations %}
+    <tr>
+      <td>{{ reservation.device.name }}</td>
+      <td>{{ reservation.user.username }}</td>
+      <td>{{ reservation.created_at }}</td>
+      <td>
+        <a
+          href="{% url 'cyber:reservation-delete-admin' reservation.pk %}"
+          class="btn btn-danger btn-sm"
+        >
+          Delete
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

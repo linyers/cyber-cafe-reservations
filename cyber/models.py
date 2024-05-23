@@ -28,7 +28,6 @@ class Device(models.Model):
     name = models.CharField(max_length=100, blank=True)
     image = models.ImageField(upload_to="device_images/", blank=True)
     device_type = models.CharField(max_length=10, choices=DEVICE_TYPES)
-    available = models.BooleanField(default=True)  # Change
 
     objects = DeviceManager()
 
@@ -41,6 +40,7 @@ class Reservation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Reservation of {self.device.name} by {self.user.username} from {self.start_time} to {self.end_time}"
