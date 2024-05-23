@@ -1,15 +1,6 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <title></title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="css/style.css" rel="stylesheet" />
-  </head>
-  <body>
-    <a href="{% url 'cyber:reservation' device='pc' %}">PC</a>
-    <a href="{% url 'cyber:reservation' device='ps' %}">PlayStation</a>
-    <a href="{% url 'cyber:reservation' device='xbox' %}">Xbox</a>
-    <a href="{% url 'cyber:reservation' device='nintendo' %}">Nintendo</a>
-  </body>
-</html>
+{% extends "base.html" %} {% block content %}
+<a href="{% url 'cyber:reservation' device='pc' %}">PC</a>
+<a href="{% url 'cyber:reservation' device='ps' %}">PlayStation</a>
+<a href="{% url 'cyber:reservation' device='xbox' %}">Xbox</a>
+<a href="{% url 'cyber:reservation' device='nintendo' %}">Nintendo</a>
+{% endblock %}

@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 
 from .models import Device, Reservation
-from .forms import ReservationForm
+from .forms import DevicesFilterAdminForm, ReservationFilterAdminForm, ReservationForm
 
 
 def index(request):
@@ -114,6 +114,23 @@ class DeviceAdminListView(UserPassesTestMixin, ListView):
     def test_func(self):
         return self.request.user.is_superuser
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form = DevicesFilterAdminForm(self.request.GET or None)
+
+        if not form.is_valid():
+            return queryset
+
+        if form.cleaned_data["device_type"] != "device_type":
+            queryset = queryset.filter(device_type=form.cleaned_data["device_type"])
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = DevicesFilterAdminForm(self.request.GET or None)
+        return context
+
 
 class DeviceCreateAdminView(UserPassesTestMixin, CreateView):
     model = Device
@@ -129,7 +146,7 @@ class DeviceUpdateAdminView(UserPassesTestMixin, UpdateView):
     model = Device
     template_name = "device_form.html"
     fields = ["name", "image", "device_type"]
-    success_url = reverse_lazy("cyber:devices-list")
+    success_url = reverse_lazy("cyber:device-list")
 
     def test_func(self):
         return self.request.user.is_superuser
@@ -138,7 +155,7 @@ class DeviceUpdateAdminView(UserPassesTestMixin, UpdateView):
 class DeviceDeleteAdminView(UserPassesTestMixin, DeleteView):
     model = Device
     template_name = "device_confirm_delete.html"
-    success_url = reverse_lazy("cyber:devices-list")
+    success_url = reverse_lazy("cyber:device-list")
 
     def test_func(self):
         return self.request.user.is_superuser
@@ -152,34 +169,26 @@ class ReservationListAdminView(UserPassesTestMixin, ListView):
     def test_func(self):
         return self.request.user.is_superuser
 
-
-class ReservationsDeviceTypeAdminView(UserPassesTestMixin, ListView):
-    model = Reservation
-    template_name = "reservation_device_type_admin.html"
-    context_object_name = "reservations"
-
     def get_queryset(self):
-        device_type = self.kwargs["device"]
-        device_type_upper = device_type.upper()
-        return Reservation.objects.filter(
-            device__device_type=device_type_upper
-        ).order_by("-created_at")
+        queryset = super().get_queryset()
+        form = ReservationFilterAdminForm(self.request.GET or None)
 
-    def test_func(self):
-        return self.request.user.is_superuser
+        if not form.is_valid():
+            return queryset
 
+        if form.cleaned_data["device_name"] != "device_name":
+            queryset = queryset.filter(device__name=form.cleaned_data["device_name"])
+        if form.cleaned_data["device_type"] != "device_type":
+            queryset = queryset.filter(
+                device__device_type=form.cleaned_data["device_type"]
+            )
 
-class ReservationsDeviceDetailAdminView(UserPassesTestMixin, ListView):
-    model = Reservation
-    template_name = "reservation_device_detail_admin.html"
-    context_object_name = "reservations"
+        return queryset
 
-    def get_queryset(self):
-        device_id = self.kwargs["device_id"]
-        return Reservation.objects.filter(device=device_id).order_by("-created_at")
-
-    def test_func(self):
-        return self.request.user.is_superuser
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = ReservationFilterAdminForm(self.request.GET or None)
+        return context
 
 
 class ReservationDeleteAdminView(UserPassesTestMixin, DeleteView):

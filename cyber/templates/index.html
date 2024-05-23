@@ -1,4 +1,9 @@
 {% extends "base.html" %} {% block content %}
+{% if user.is_superuser %}
 <a href="{% url 'cyber:device-list' %}">Devices</a>
 <a href="{% url 'cyber:reservation-list' %}">Reservations</a>
+{% else %}
+<a href="{% url 'cyber:devices' %}">Reservate a device</a>
+<a href="#">My reservations</a>
+{% endif %}
 {% endblock %}

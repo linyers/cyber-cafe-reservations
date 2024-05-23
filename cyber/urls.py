@@ -8,8 +8,6 @@ from .views import (
     DeviceDeleteAdminView,
     DeviceUpdateAdminView,
     ReservationListAdminView,
-    ReservationsDeviceTypeAdminView,
-    ReservationsDeviceDetailAdminView,
     ReservationDeleteAdminView,
 )
 
@@ -31,16 +29,6 @@ urlpatterns = [
         "reservations/list/",
         ReservationListAdminView.as_view(),
         name="reservation-list",
-    ),
-    re_path(
-        r"reservations/type/(?P<device>pc|ps|xbox|nintendo)/",
-        ReservationsDeviceTypeAdminView.as_view(),
-        name="reservations-device-type-admin",
-    ),
-    path(
-        "reservations/device/<int:device_id>/",
-        ReservationsDeviceDetailAdminView.as_view(),
-        name="reservations-device-detail-admin",
     ),
     path(
         "reservations/delete/<int:pk>/",

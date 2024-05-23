@@ -1,11 +1,23 @@
 {% extends "base.html" %} {% block content %}
 <h2>Device List</h2>
+
+<form method="get">
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ form.device_type }}
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Filter</button>
+  <a href="{% url 'cyber:device-list' %}" class="btn btn-danger">Remove filter</a>
+</form>
+
 <ul>
   {% for device in devices %}
   <li>
     {{ device.name }} - {{ device.get_device_type_display }}
     <a href="{% url 'cyber:device-update' device.pk %}">Edit</a>
     <a href="{% url 'cyber:device-delete' device.pk %}">Delete</a>
+    <a href="{% url 'cyber:reservation-list' %}?device_name={{ device.name }}&device_type=device_type">Reservations</a>
   </li>
   {% endfor %}
 </ul>

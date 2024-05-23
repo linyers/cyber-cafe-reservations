@@ -1,20 +1,28 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <title></title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="css/style.css" rel="stylesheet" />
-  </head>
-  <body>
-    <h3>Reservation for {{device}}</h3>
-    <form method="get">
-      <label for="started_at">When you wanna play?</label>
-      <input type="datetime-local" name="started_at" required />
-
-      <label for="hours">How many hours?</label>
-      <input type="number" min="1" max="24" name="hours" required />
-      <button type="submit">Search device</button>
-    </form>
-  </body>
-</html>
+{% extends "base.html" %} {% block content %}
+<h3>Reservation for {{ device }}</h3>
+<form method="get">
+  <div class="form-group">
+    <label for="started_at">When you wanna play?</label>
+    <input
+      type="datetime-local"
+      name="started_at"
+      id="started_at"
+      class="form-control"
+      required
+    />
+  </div>
+  <div class="form-group">
+    <label for="hours">How many hours?</label>
+    <input
+      type="number"
+      min="1"
+      max="24"
+      name="hours"
+      id="hours"
+      class="form-control"
+      required
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Search device</button>
+</form>
+{% endblock %}
