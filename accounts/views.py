@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from .forms import UserRegisterForm, UserLoginForm
 from .decorators import unauthenticated_user
@@ -48,3 +49,9 @@ def logout_view(request):
     logout(request)
     messages.success(request, "You have been logged out.")
     return redirect("accounts:login")
+
+
+@login_required
+def profile_view(request):
+    reservations = request.user.reservation.all().order_by("-created_at")
+    return render(request, "profile.html", {"reservations": reservations})

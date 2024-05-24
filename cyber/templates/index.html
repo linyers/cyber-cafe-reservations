@@ -4,6 +4,6 @@
 <a href="{% url 'cyber:reservation-list' %}">Reservations</a>
 {% else %}
 <a href="{% url 'cyber:devices' %}">Reservate a device</a>
-<a href="#">My reservations</a>
+<a href="{% url 'accounts:profile' %}">My reservations</a>
 {% endif %}
 {% endblock %}

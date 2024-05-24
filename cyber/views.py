@@ -150,7 +150,7 @@ class DeviceCreateAdminView(UserPassesTestMixin, CreateView):
     model = Device
     template_name = "device_form.html"
     fields = ["name", "image", "device_type"]
-    success_url = reverse_lazy("cyber:devices-list")
+    success_url = reverse_lazy("cyber:device-list")
 
     def test_func(self):
         return self.request.user.is_superuser
@@ -212,10 +212,15 @@ class ReservationDeleteAdminView(UserPassesTestMixin, DeleteView):
     context_object_name = "reservation"
 
     def test_func(self):
-        return self.request.user.is_superuser
+        user_is_owner = self.get_object().user == self.request.user
+        return self.request.user.is_superuser or user_is_owner
 
     def get_success_url(self):
-        next_url = self.request.GET.get("next", reverse_lazy("cyber:reservation-list"))
+        next_url = (
+            reverse_lazy("cyber:reservation-list")
+            if self.request.user.is_superuser
+            else reverse_lazy("accounts:profile")
+        )
         return next_url
 
     def delete(self, request, *args, **kwargs):

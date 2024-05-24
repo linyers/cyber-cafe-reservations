@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_save, post_delete
-from django.utils import timezone
+from django.db.models.signals import pre_save, post_delete, post_save
+
+import uuid
 
 
 class DeviceManager(models.Manager):
@@ -37,8 +38,9 @@ class Device(models.Model):
 
 
 class Reservation(models.Model):
+    code = models.CharField(max_length=8, unique=True, blank=True)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reservation")
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -87,6 +89,15 @@ def set_all_devices_name(sender, instance, *args, **kwargs):
     Device.objects.bulk_update(devices, ["name"])
 
 
+def set_reservation_code(sender, instance, *args, **kwargs):
+    if instance.code:
+        return
+    id = str(uuid.uuid4())
+    instance.code = f"{id[:8]}"
+
+
 pre_save.connect(set_name, sender=Device)
 pre_save.connect(set_image, sender=Device)
 post_delete.connect(set_all_devices_name, sender=Device)
+
+pre_save.connect(set_reservation_code, sender=Reservation)
