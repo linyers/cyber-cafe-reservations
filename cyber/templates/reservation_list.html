@@ -1,5 +1,6 @@
 
 {% extends "base.html" %}
+{% load tz %}
 {% block content %}
 <h2 class="mt-4">Reservation List</h2>
 
@@ -21,6 +22,8 @@
     <tr>
       <th scope="col">Device</th>
       <th scope="col">User</th>
+      <th scope="col">Start</th>
+      <th scope="col">End</th>
       <th scope="col">Created At</th>
       <th scope="col">Actions</th>
     </tr>
@@ -30,7 +33,11 @@
     <tr>
       <td>{{ reservation.device.name }}</td>
       <td>{{ reservation.user.username }}</td>
-      <td>{{ reservation.created_at }}</td>
+      {% timezone request.timezone %}
+        <td>{{ reservation.start_time }}</td>
+        <td>{{ reservation.end_time }}</td>
+        <td>{{ reservation.created_at }}</td>
+      {% endtimezone %}
       <td>
         <a href="{% url 'cyber:reservation-delete-admin' reservation.pk %}" class="btn btn-danger btn-sm">Delete</a>
       </td>
@@ -41,8 +48,8 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-  var deviceNameSelect = document.getElementById("id_device_name");
-  var deviceTypeSelect = document.getElementById("id_device_type");
+  let deviceNameSelect = document.getElementById("id_device_name");
+  let deviceTypeSelect = document.getElementById("id_device_type");
 
   deviceTypeSelect.addEventListener("change", function() {
     if (this.value !== "device_type") {
@@ -60,5 +67,6 @@
     }
   });
 });
+
 </script>
 {% endblock %}

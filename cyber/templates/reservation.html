@@ -1,12 +1,14 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% load tz %} {% block content %}
 <form method="post">
   {% csrf_token %}
+  {% timezone request.timezone %}
   <div class="form-group">
     <span>You turn initialize at {{ start_time }}</span>
     <span>and finalize at {{ end_time }}</span>
     <input type="hidden" name="start_time" value="{{ start_time }}" />
     <input type="hidden" name="end_time" value="{{ end_time }}" />
   </div>
+  {% endtimezone %}
   <div class="form-group">
     <label for="device">Select device</label>
     <select name="device" id="device" class="form-control">

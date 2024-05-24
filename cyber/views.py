@@ -10,6 +10,9 @@ from django.views.generic import (
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
+import pytz
 
 from datetime import datetime, timedelta
 
@@ -45,11 +48,16 @@ class ReservationView(TemplateView):
                 request, "reservation_search.html", {"device": self.devices[device]}
             )
 
-        start_time = datetime.strptime(started_at, "%Y-%m-%dT%H:%M")
+        naive_start_time = datetime.strptime(started_at, "%Y-%m-%dT%H:%M")
+
+        start_time = request.timezone.localize(naive_start_time)
+        start_time_utc = start_time.astimezone(pytz.utc)
+
         end_time = start_time + timedelta(hours=int(hours))
+        end_time_utc = end_time.astimezone(pytz.utc)
 
         available_devices = Device.objects.find_available_devices(
-            start_time, end_time, device
+            start_time_utc, end_time_utc, device
         )
 
         return render(
@@ -58,7 +66,7 @@ class ReservationView(TemplateView):
             {
                 "device": self.devices[device],
                 "hours": hours,
-                "start_time": started_at,
+                "start_time": start_time,
                 "end_time": end_time,
                 "available_devices": available_devices,
             },
@@ -70,11 +78,17 @@ class ReservationView(TemplateView):
 
         hours = request.GET.get("hours")
         started_at = request.GET.get("started_at")
-        start_time = datetime.strptime(started_at, "%Y-%m-%dT%H:%M")
+
+        naive_start_time = datetime.strptime(started_at, "%Y-%m-%dT%H:%M")
+
+        start_time = request.timezone.localize(naive_start_time)
+        start_time_utc = start_time.astimezone(pytz.utc)
+
         end_time = start_time + timedelta(hours=int(hours))
+        end_time_utc = end_time.astimezone(pytz.utc)
 
         available_devices = Device.objects.find_available_devices(
-            start_time, end_time, device
+            start_time_utc, end_time_utc, device
         )
 
         form = ReservationForm(request.POST)
@@ -83,8 +97,8 @@ class ReservationView(TemplateView):
             selected_device = request.POST["device"]
 
             reservation.device = Device.objects.get(pk=selected_device)
-            reservation.start_time = start_time
-            reservation.end_time = end_time
+            reservation.start_time = start_time_utc
+            reservation.end_time = end_time_utc
 
             user = request.user
             reservation.user = user
@@ -174,7 +188,7 @@ class ReservationListAdminView(UserPassesTestMixin, ListView):
         form = ReservationFilterAdminForm(self.request.GET or None)
 
         if not form.is_valid():
-            return queryset
+            return queryset.order_by("-created_at")
 
         if form.cleaned_data["device_name"] != "device_name":
             queryset = queryset.filter(device__name=form.cleaned_data["device_name"])
@@ -183,11 +197,12 @@ class ReservationListAdminView(UserPassesTestMixin, ListView):
                 device__device_type=form.cleaned_data["device_type"]
             )
 
-        return queryset
+        return queryset.order_by("-created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = ReservationFilterAdminForm(self.request.GET or None)
+        context["user_timezone"] = self.request.COOKIES.get("django_timezone")
         return context
 
 
