@@ -1,9 +1,14 @@
 {% extends "base.html" %} {% block content %}
-{% if user.is_superuser %}
-<a href="{% url 'cyber:device-list' %}">Devices</a>
-<a href="{% url 'cyber:reservation-list' %}">Reservations</a>
-{% else %}
-<a href="{% url 'cyber:devices' %}">Reservate a device</a>
-<a href="{% url 'accounts:profile' %}">My reservations</a>
-{% endif %}
+<div class="col-12 text-center">
+  <h1 class="display-4">Welcome to Cyber Cafe</h1>
+</div>
+<div class="d-flex justify-content-center my-4">
+    {% if user.is_superuser %}
+    <a href="{% url 'cyber:device-list' %}" class="btn btn-primary mx-2">Devices</a>
+    <a href="{% url 'cyber:reservation-list' %}" class="btn btn-primary mx-2">Reservations</a>
+    {% else %}
+    <a href="{% url 'cyber:devices' %}" class="btn btn-primary mx-2">Reservate a device</a>
+    <a href="{% url 'accounts:profile' %}" class="btn btn-primary mx-2">My reservations</a>
+    {% endif %}
+</div>
 {% endblock %}

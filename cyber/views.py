@@ -11,6 +11,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.contrib import messages
 
 import pytz
 
@@ -104,6 +105,8 @@ class ReservationView(TemplateView):
             reservation.user = user
 
             reservation.save()
+
+            messages.success(request, f"Reserved {device} successfully!")
 
             return redirect("cyber:index")
 

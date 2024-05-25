@@ -1,6 +1,41 @@
-{% extends "base.html" %} {% block content %}
-<a href="{% url 'cyber:reservation' device='pc' %}">PC</a>
-<a href="{% url 'cyber:reservation' device='ps' %}">PlayStation</a>
-<a href="{% url 'cyber:reservation' device='xbox' %}">Xbox</a>
-<a href="{% url 'cyber:reservation' device='nintendo' %}">Nintendo</a>
+
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .transform-scale img {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .transform-scale img:hover {
+        transform: scale(1.1);
+    }
+</style>
+
+<div class="col-12 text-center">
+  <h1 class="display-4">Welcome to Cyber Cafe</h1>
+  <p class="lead font-weight-bold">Choose your device</p>
+</div>
+<div class="row justify-content-center mt-5">
+  <div class="col-6 col-md-3 mb-4 text-center">
+    <a class="transform-scale" href="{% url 'cyber:reservation' device='pc' %}">
+      <img src="/media/default_images/pc_default.png" class="img-fluid" alt="PC">
+    </a>
+  </div>
+  <div class="col-6 col-md-3 mb-4 text-center">
+    <a class="transform-scale" href="{% url 'cyber:reservation' device='ps' %}">
+      <img src="/media/default_images/ps_default.png" class="img-fluid" alt="PS">
+    </a>
+  </div>
+  <div class="col-6 col-md-3 mb-4 text-center">
+    <a class="transform-scale" href="{% url 'cyber:reservation' device='xbox' %}">
+      <img src="/media/default_images/xbox_default.png" class="img-fluid" alt="Xbox">
+    </a>
+  </div>
+  <div class="col-6 col-md-3 mb-4 text-center">
+    <a class="transform-scale" href="{% url 'cyber:reservation' device='nintendo' %}">
+      <img src="/media/default_images/nintendo_default.png" class="img-fluid" alt="Nintendo">
+    </a>
+  </div>
+</div>
 {% endblock %}
+

@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block content %}
-<h2>Device List</h2>
+<h2 class="mt-4">Device List</h2>
 
 <form method="get">
   <div class="form-row">
@@ -7,11 +7,19 @@
       {{ form.device_type }}
     </div>
   </div>
-  <button type="submit" class="btn btn-primary">Filter</button>
-  <a href="{% url 'cyber:device-list' %}" class="btn btn-danger">Remove filter</a>
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a class="btn btn-danger" href="{% url 'cyber:device-list' %}">Remove filter</a>
+    </div>
+    <div>
+      <a class="btn btn-primary" href="{% url 'cyber:device-create' %}">Add new device</a>
+    </div>
+  </div>
+
 </form>
 
-<ul>
+<ul class="mt-4">
   {% for device in devices %}
   <li>
     {{ device.name }} - {{ device.get_device_type_display }}
@@ -21,5 +29,4 @@
   </li>
   {% endfor %}
 </ul>
-<a href="{% url 'cyber:device-create' %}">Add new device</a>
 {% endblock %}
