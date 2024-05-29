@@ -11,6 +11,9 @@
       class="form-control"
       required
     />
+    {% for error in form.username.errors %}
+      <p style="color: red;">{{ error }}</p>
+    {% endfor %}
   </div>
   <div class="form-group">
     <label for="id_password">Password</label>
@@ -21,6 +24,9 @@
       class="form-control"
       required
     />
+    {% for error in form.password.errors %}
+      <p style="color: red;">{{ error }}</p>
+    {% endfor %}
   </div>
   <button type="submit" class="btn btn-primary">Login</button>
   <a href="{% url 'accounts:register' %}" class="btn btn-link">

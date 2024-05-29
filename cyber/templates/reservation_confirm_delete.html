@@ -3,7 +3,7 @@
 <p>Are you sure you want to delete this reservation?</p>
 <form method="post">
   {% csrf_token %}
-  <button type="submit">Confirm</button>
-  <a href="{{ request.GET.next|default:'/' }}">Cancel</a>
+  <button class="btn btn-danger btn-md" type="submit">Confirm</button>
+  <a class="btn btn-secondary btn-md" href="{{ request.GET.next|default:'/' }}">Cancel</a>
 </form>
 {% endblock %}
